@@ -4,20 +4,24 @@
 
   const LS_KEY = 'taskmgr.tasks.v1'
   const FILTER_KEY = 'taskmgr.filter.v1'
+  const THEME_KEY = 'taskmgr.theme.v1'
   const form = document.getElementById('task-form')
   const input = document.getElementById('task-input')
   const list = document.getElementById('tasks-list')
   const countEl = document.getElementById('task-count')
   const clearCompletedBtn = document.getElementById('clear-completed')
   const filterBtns = document.querySelectorAll('.filter-btn')
+  const themeToggle = document.getElementById('theme-toggle')
 
   let tasks = []
   let filter = 'all'
+  let theme = 'dark'
 
   function save(){
     try{
       localStorage.setItem(LS_KEY, JSON.stringify(tasks))
       localStorage.setItem(FILTER_KEY, filter)
+      localStorage.setItem(THEME_KEY, theme)
     }catch(e){console.warn('Failed to save tasks',e)}
   }
 
@@ -27,7 +31,32 @@
       tasks = raw?JSON.parse(raw):[]
       const f = localStorage.getItem(FILTER_KEY)
       if(f) filter = f
+      const t = localStorage.getItem(THEME_KEY)
+      if(t) theme = t
     }catch(e){tasks=[]}
+  }
+
+  function applyTheme(t){
+    theme = t || 'dark'
+    try{
+      document.documentElement.setAttribute('data-theme', theme)
+    }catch(e){}
+    if(themeToggle){
+      const isDark = theme === 'dark'
+      themeToggle.setAttribute('aria-pressed', String(isDark))
+      themeToggle.title = isDark? 'Switch to light mode' : 'Switch to dark mode'
+      themeToggle.textContent = isDark? '🌙' : '☀️'
+      const hidden = document.createElement('span')
+      hidden.className = 'visually-hidden'
+      hidden.textContent = isDark? 'Toggle dark mode' : 'Toggle light mode'
+      // ensure hidden label exists without duplicating
+      if(!themeToggle.querySelector('.visually-hidden')) themeToggle.appendChild(hidden)
+    }
+  }
+
+  function toggleTheme(){
+    applyTheme(theme === 'dark' ? 'light' : 'dark')
+    save()
   }
 
   function updateCount(){
@@ -148,12 +177,15 @@
     render()
   }
 
-  form.addEventListener('submit', (e)=>{
+form.addEventListener('submit', (e)=>{
     e.preventDefault()
-    addTask(input.value)
-    input.value = ''
-    input.focus()
-  })
+    const taskText = input.value.trim()
+    if(taskText){
+        addTask(taskText)
+        input.value = ''
+        input.focus()
+    }
+})
 
   clearCompletedBtn.addEventListener('click', ()=>{
     clearCompleted()
@@ -169,11 +201,18 @@
     })
   }
 
+  if(themeToggle){
+    themeToggle.addEventListener('click', ()=>{
+      toggleTheme()
+    })
+  }
+
   // initialize
   load()
   updateFilterButtons()
+  applyTheme(theme)
   render()
 
   // expose for debugging
-  window.TaskApp = { addTask, toggleTask, removeTask, clearCompleted, tasks }
+  window.TaskApp = { addTask, toggleTask, removeTask, clearCompleted, setFilter, toggleTheme, tasks }
 })();
