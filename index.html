@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Task Manager</title>
+        <meta name="description" content="A small accessible task manager with add/delete/complete and persistence" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <header class="site-header">
+            <div class="container">
+                <h1 class="site-title">Task Manager</h1>
+                <p class="site-subtitle">Add, complete, and remove tasks — accessible & responsive</p>
+            </div>
+        </header>
+
+        <main class="container" id="main">
+            <section aria-labelledby="add-task-label" class="task-input-section">
+                <h2 id="add-task-label" class="visually-hidden">Add task</h2>
+                <form id="task-form" class="task-form" aria-describedby="form-help">
+                    <label for="task-input" class="visually-hidden">New task</label>
+                    <input id="task-input" name="task" type="text" placeholder="Add a new task…" aria-label="New task" required maxlength="200" />
+                    <button type="submit" class="btn primary" id="add-btn">Add</button>
+                </form>
+                <p id="form-help" class="form-help">Press Enter or click Add to create a task. Use the keyboard to manage tasks.</p>
+            </section>
+
+            <section aria-labelledby="tasks-heading" class="tasks-section">
+                <h2 id="tasks-heading">Your Tasks</h2>
+                <div class="tasks-controls">
+                    <div class="counts" aria-live="polite" id="task-count">0 tasks</div>
+                    <div class="filters" role="tablist" aria-label="Filter tasks">
+                        <button class="btn filter-btn" data-filter="all" aria-pressed="true">All</button>
+                        <button class="btn filter-btn" data-filter="pending" aria-pressed="false">Pending</button>
+                        <button class="btn filter-btn" data-filter="completed" aria-pressed="false">Completed</button>
+                    </div>
+                    <button id="clear-completed" class="btn" aria-label="Clear completed tasks">Clear completed</button>
+                </div>
+                <ul id="tasks-list" class="tasks-list" role="list" aria-live="polite"></ul>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container">
+                <small>Built with semantic HTML • Accessible & responsive</small>
+            </div>
+        </footer>
+
+        <script src="app.js" defer></script>
+    </body>
+</html>
+
